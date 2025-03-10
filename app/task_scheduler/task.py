@@ -6,11 +6,12 @@ logger = setup_logger("task")
 
 ai_agnet_number = os.getenv("AI_AGENT_NUMBER")
 n8n_webhook_url = os.getenv("N8N_WEBHOOK_URL")
+redis_host = os.getenv("REDIS_HOST", "localhost")
 
 app = Celery(
     "tasks",
-    broker="redis://localhost:6379/0",
-    backend="redis://localhost:6379/0",
+    broker=f"redis://{redis_host}:6379/0",
+    backend=f"redis://{redis_host}:6379/0",
 )
 app.conf.broker_connection_retry_on_startup = True
 
