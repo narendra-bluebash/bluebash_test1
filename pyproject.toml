@@ -18,6 +18,8 @@ alembic = "^1.14.0"
 livekit = "^0.20.1"
 livekit-api = "^0.8.2"
 psycopg2 = "^2.9.10"
+celery = "^5.4.0"
+redis = "^5.2.1"
 
 [build-system]
 requires = ["poetry-core"]

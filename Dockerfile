@@ -16,7 +16,6 @@ RUN poetry config virtualenvs.create false && poetry install --no-interaction --
 # Copy project files
 
 ADD ./app /app/app
-ADD ./utils /app/utils
 COPY main.py /app/main.py
 
 RUN pip install gunicorn uvicorn
