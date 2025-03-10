@@ -12,13 +12,14 @@ class User(Base):
     type = Column(String, default="buyer")
     broker_name = Column(String, default="")
     active_session_id = Column(String, default="")
-    all_session_ids = Column(ARRAY(String), default=[])
+    queued_session_ids = Column(ARRAY(String), default=[])
+    completed_session_ids = Column(ARRAY(String), default=[])
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    properties = relationship("Property", back_populates="buyer_agent")
+    bookings = relationship("booking", back_populates="buyer_agent")
 
-class Property(Base):
-    __tablename__ = "properties"
+class booking(Base):
+    __tablename__ = "bookings"
 
     id = Column(Integer, primary_key=True, index=True)
     buyer_agent_phone_number = Column(String, ForeignKey("users.phone_number"), nullable=False)
@@ -33,4 +34,4 @@ class Property(Base):
     status = Column(String, default="pending")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    buyer_agent = relationship("User", back_populates="properties")
+    buyer_agent = relationship("User", back_populates="bookings")
