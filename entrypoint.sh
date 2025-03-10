@@ -2,7 +2,7 @@
 
 export PYTHONPATH=$(pwd)
 
-poetry run uvicorn main:app --host 0.0.0.0 --port 8000 --workers 2 &
-poetry run celery -A app.task_scheduler.task worker --loglevel=info
+gunicorn -w 3 -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:7860 &
+celery -A app.task_scheduler.task worker --loglevel=info
 
 wait

@@ -20,6 +20,7 @@ livekit-api = "^0.8.2"
 psycopg2 = "^2.9.10"
 celery = "^5.4.0"
 redis = "^5.2.1"
+gunicorn = "^23.0.0"
 
 [build-system]
 requires = ["poetry-core"]

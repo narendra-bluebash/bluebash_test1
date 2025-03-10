@@ -14,10 +14,15 @@ COPY pyproject.toml poetry.lock* /app/
 
 RUN poetry config virtualenvs.create false && poetry install --no-interaction --no-ansi --no-root
 # Copy project files
+RUN apt update && apt install redis-server -y
+
 
 ADD ./app /app/app
 COPY main.py /app/main.py
+ADD entrypoint.sh /app/
+#RUN pip install gunicorn uvicorn
 
-RUN pip install gunicorn uvicorn
+#CMD ["gunicorn", "-w", "3", "-k", "uvicorn.workers.UvicornWorker", "main:app", "--bind", "0.0.0.0:7860"]
+RUN chmod +x ./entrypoint.sh
 
-CMD ["gunicorn", "-w", "3", "-k", "uvicorn.workers.UvicornWorker", "main:app", "--bind", "0.0.0.0:7860"]
+ENTRYPOINT ["./entrypoint.sh"]
