@@ -5,7 +5,7 @@ services:
     ports:
       - 7860:7860
     volumes:
-      - ../.env:/app/.env
+      - .env:/app/.env
     networks:
       - realtors_app_network
     restart: always
