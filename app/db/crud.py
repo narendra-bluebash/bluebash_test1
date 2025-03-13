@@ -6,9 +6,9 @@ from app.utils.log_utils import setup_logger
 logger = setup_logger("crud")
 
 def get_booking_by_mls_and_buyer_phone(db: Session, mls_number: str, buyer_agent_phone_number: str):
-    return db.query(models.booking).filter(
-        models.booking.mls_number == mls_number,
-        models.booking.buyer_agent_phone_number == buyer_agent_phone_number
+    return db.query(models.Booking).filter(
+        models.Booking.mls_number == mls_number,
+        models.Booking.buyer_agent_phone_number == buyer_agent_phone_number
     ).first()
 
 def get_user_by_phone_number(db: Session, phone_number: str):
@@ -32,18 +32,33 @@ def create_user(db: Session, full_name: str, phone_number: str, type: str, agent
         return None
 
 def get_booking_by_session_id(db: Session, session_id: str):
-    return db.query(models.booking).filter(models.booking.listing_agent_session_id == session_id).first()
+    return db.query(models.Booking).filter(models.Booking.listing_agent_session_id == session_id).first()
 
 def get_booking_by_id(db: Session, booking_id: int):
-    return db.query(models.booking).filter(models.booking.id == booking_id).first()
+    return db.query(models.Booking).filter(models.Booking.id == booking_id).first()
+
+def get_all_bookings_by_buyer_agent_phone_number(db: Session, buyer_agent_phone_number: str):
+    return db.query(models.Booking).filter(models.Booking.buyer_agent_phone_number == buyer_agent_phone_number).all()
 
 def get_booking_by_id_and_buyer_agent_phone_number(db: Session, booking_id: int, buyer_agent_phone_number: str):
-    return db.query(models.booking).filter(models.booking.id == booking_id,
-                                           models.booking.buyer_agent_phone_number == buyer_agent_phone_number).first()
+    return db.query(models.Booking).filter(models.Booking.id == booking_id,
+                                           models.Booking.buyer_agent_phone_number == buyer_agent_phone_number).first()
 
 def get_booking_by_mls_number_and_buyer_agent_phone_number(db: Session, mls_number: str, buyer_agent_phone_number: str):
-    return db.query(models.booking).filter(models.booking.mls_number == mls_number,
-                                           models.booking.buyer_agent_phone_number == buyer_agent_phone_number).first()
+    return db.query(models.Booking).filter(models.Booking.mls_number == mls_number,
+                                           models.Booking.buyer_agent_phone_number == buyer_agent_phone_number).first()
+
+def get_all_bookings_by_listing_agent_phone_number(db: Session, listing_agent_phone_number: str):
+    return db.query(models.Booking).filter(models.Booking.listing_agent_phone_number == listing_agent_phone_number).all()
+
+def get_booking_by_id_and_listing_agent_phone_number(db: Session, booking_id: int, listing_agent_phone_number: str):
+    return db.query(models.Booking).filter(models.Booking.id == booking_id,
+                                           models.Booking.listing_agent_phone_number == listing_agent_phone_number).first()
+
+def get_booking_by_mls_number_and_listing_agent_phone_number(db: Session, mls_number: str, listing_agent_phone_number: str):
+    return db.query(models.Booking).filter(models.Booking.mls_number == mls_number,
+                                           models.Booking.listing_agent_phone_number == listing_agent_phone_number).first()
+
 
 def create_booking(db: Session,
                     buyer_agent_phone_number: str,
@@ -57,7 +72,7 @@ def create_booking(db: Session,
                     status: str = None):
     try:
         logger.info(f"Creating new booking with mls_number: {mls_number}")
-        new_booking = models.booking(buyer_agent_phone_number=buyer_agent_phone_number,
+        new_booking = models.Booking(buyer_agent_phone_number=buyer_agent_phone_number,
                                     address=address,
                                     mls_number=mls_number,
                                     buyer_selected_date=buyer_selected_date,

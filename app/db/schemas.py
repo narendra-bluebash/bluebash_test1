@@ -38,15 +38,24 @@ class BuyerRealtorConfirmation(BaseModel):
     booking_id: str = Field(default="")
     date: str = Field(default="")
     time: str = Field(default="")
+    reason: str = Field(default="")
     confirmation: str = Field(default="")
 
 class ListingRealtorConfirmation(BaseModel):
     confirmation: str = Field(default="")
     date: str = Field(default="")
     time: str = Field(default="")
+    reason: str = Field(default="")
     session_id: str = Field(default="")
 
 class GetBooking(BaseModel):
     phone_number: str = Field(default="")
+    query_type: str = Field(default="")
     booking_id: str = Field(default="")
     mls_number: str = Field(default="")
+
+class CollectFeedback(BaseModel):
+    phone_number: str = Field(default="")
+    booking_id: str = Field(default="")
+    mls_number: str = Field(default="")
+    feedback_msg: str = Field(default="")

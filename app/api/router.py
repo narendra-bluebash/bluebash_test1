@@ -1,19 +1,18 @@
+from app.db import crud
 from app.db import models
+from twilio.rest import Client
 import os, json, random, requests
 from sqlalchemy.orm import Session
+from fastapi.responses import Response
 from fastapi.responses import JSONResponse
-from app.db.database import SessionLocal, engine
-from app.db import crud
-from app.services.realtor_service import RealtorService
 from app.utils.log_utils import setup_logger
+from app.db.database import SessionLocal, engine
+from app.services.realtor_service import RealtorService
 from fastapi import Request, Depends, APIRouter, HTTPException
 from twilio.twiml.messaging_response import MessagingResponse
 from app.services.properties_service import get_property_by_address_or_mls_number
 from app.services.agent_service import verify_agent_by_agent_id_and_broker_name
-from fastapi.responses import Response
-from pydantic import BaseModel, Field
-from twilio.rest import Client
-from app.db.schemas import BuyerRealtorConfirmation, BuyerRealtorSignUP, CreatebookingRequest, GetBooking, ListingRealtorConfirmation, ListingRealtorSignUP, MessageRequestSignUP
+from app.db.schemas import BuyerRealtorConfirmation, BuyerRealtorSignUP, CreatebookingRequest, GetBooking, ListingRealtorConfirmation, ListingRealtorSignUP, MessageRequestSignUP, CollectFeedback
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -70,9 +69,7 @@ async def create_booking(request: CreatebookingRequest, db: Session = Depends(ge
         db.rollback()
         logger.error(f"Error in creating booking: {e}")
         raise HTTPException(status_code=400, detail="booking creation failed")
-
     return JSONResponse(content=booking)
-
 
 
 @router.post('/realtor/book_showings')
@@ -83,10 +80,17 @@ async def buyer_book_showings(request: ListingRealtorSignUP, db: Session = Depen
     logger.warning(f"Listing realtor sign up response: {response}")
     return JSONResponse(content=response)
 
-@router.post('/realtor/get_booking')
-async def get_booking(request: GetBooking, db: Session = Depends(get_db)):
+@router.post('/buyer_realtor/get_booking')
+async def buyer_realtor_get_booking(request: GetBooking, db: Session = Depends(get_db)):
     realtor_service = RealtorService()
-    response = realtor_service.get_booking(db,  booking_id=request.booking_id, mls_number=request.mls_number, phone_number=request.phone_number)
+    response = realtor_service.buyer_realtor_get_booking(db, request.query_type, booking_id=request.booking_id, mls_number=request.mls_number, phone_number=request.phone_number)
+    logger.warning(f"Get booking response: {response}")
+    return JSONResponse(content=response)
+
+@router.post('/listing_realtor/get_booking')
+async def listing_realtor_get_booking(request: GetBooking, db: Session = Depends(get_db)):
+    realtor_service = RealtorService()
+    response = realtor_service.listing_realtor_get_booking(db, request.query_type, booking_id=request.booking_id, mls_number=request.mls_number, phone_number=request.phone_number)
     logger.warning(f"Get booking response: {response}")
     return JSONResponse(content=response)
 
@@ -103,7 +107,7 @@ async def buyer_realtor_sign_up(request: BuyerRealtorSignUP, db: Session = Depen
 async def buyer_realtor_confirmation(request: BuyerRealtorConfirmation, db: Session = Depends(get_db)):
     logger.warning(f"Buyer realtor confirmation request: {request}")
     realtor_service = RealtorService()
-    response = realtor_service.buyer_realtor_confirmation(db, request.phone_number, request.booking_id, request.mls_number, request.date, request.time, request.confirmation)
+    response = realtor_service.buyer_realtor_confirmation(db, request.phone_number, request.booking_id, request.mls_number, request.date, request.time, request.confirmation, request.reason)
     logger.warning(f"Buyer realtor confirmation response: {response}")
     return JSONResponse(content=response)
 
@@ -111,11 +115,16 @@ async def buyer_realtor_confirmation(request: BuyerRealtorConfirmation, db: Sess
 async def listing_realtor_confirmation(request: ListingRealtorConfirmation, db: Session = Depends(get_db)):
     logger.warning(f"Listing realtor confirmation request: {request}")
     realtor_service = RealtorService()
-    response = realtor_service.listing_realtor_confirmation(db, request.session_id, request.date, request.time, request.confirmation)
+    response = realtor_service.listing_realtor_confirmation(db, request.session_id, request.date, request.time, request.confirmation, request.reason)
     logger.warning(f"Listing realtor confirmation response: {response}")
     return JSONResponse(content=response)
 
-
+@router.post('/realtor/collect_feedback')
+async def collect_feedback(request: CollectFeedback, db: Session = Depends(get_db)):
+    realtor_service = RealtorService()
+    response = realtor_service.collect_feedback(db, request.phone_number, request.booking_id, request.mls_number, request.feedback_msg)
+    logger.warning(f"Collect feedback response: {response}")
+    return JSONResponse(content=response)
 
 # @router.post("/webhook/sms")
 # async def receive_sms(request: Request):
