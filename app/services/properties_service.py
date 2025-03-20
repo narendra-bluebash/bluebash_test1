@@ -5,7 +5,7 @@ logger = setup_logger("properties_service")
 def get_property_by_address_or_mls_number(mls_number, address):
     if mls_number in ["123", "456", "789", "123456"]:
         response = {
-            "address": "123 Main St, San Francisco, CA 94105",
+            "streetaddress": "123 Main St, San Francisco, CA 94105",
             "mls_number": mls_number,
             "price": "$1,000,000",
             "bedrooms": "3",
@@ -19,7 +19,7 @@ def get_property_by_address_or_mls_number(mls_number, address):
         }
     elif mls_number == "654321":
         response = {
-            "address": "456 Elm St, San Francisco, CA 94105",
+            "streetaddress": "456 Elm St, San Francisco, CA 94105",
             "mls_number": mls_number,
             "price": "$1,500,000",
             "bedrooms": "4",
@@ -33,7 +33,7 @@ def get_property_by_address_or_mls_number(mls_number, address):
         }
     elif address == "321 Oak St, San Francisco, CA 94105":
         response = {
-            "address": address,
+            "streetaddress": address,
             "mls_number": "789012",
             "price": "$2,000,000",
             "bedrooms": "5",

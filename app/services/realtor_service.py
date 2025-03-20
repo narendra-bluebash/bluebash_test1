@@ -5,6 +5,7 @@ from sqlalchemy.orm.attributes import flag_modified
 from app.task_scheduler.task import schedule_n8n_workflow, create_payload_for_whatsapp_message, schedule_showing_reminder_for_booking
 from app.services.agent_service import verify_agent_by_agent_id_and_broker_name
 from app.services.properties_service import get_property_by_address_or_mls_number
+from app.db.mysql_db_crud import fetch_listings_by_mls_number
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -24,13 +25,14 @@ class RealtorService:
         buyer_selected_time = time
         logger.warning(f"Listing realtore - booking_address: {booking_address}, mls_number: {mls_number}, date: {buyer_selected_date}, time: {buyer_selected_time}, buyer_agent_phone_number: {buyer_agent_phone_number}")
         #TODO: Add logic to get booking details from mls_number
-        response = get_property_by_address_or_mls_number(mls_number=mls_number, address=booking_address)
+        # response = get_property_by_address_or_mls_number(mls_number=mls_number, address=booking_address)
+        response = fetch_listings_by_mls_number(mls_number)
         if response is None:
             return "Invalid mls_number or address"
         listing_agent_full_name = response["agent_name"]
         listing_agent_phone_number = response["agent_phone"]
         type = "listing"
-        booking_address = response["address"]
+        booking_address = response["streetaddress"]
         try:
             buyer_user = crud.get_user_by_phone_number(db, phone_number=buyer_agent_phone_number)
             if not buyer_user:
