@@ -12,7 +12,7 @@ from fastapi import Request, Depends, APIRouter, HTTPException
 from twilio.twiml.messaging_response import MessagingResponse
 from app.services.properties_service import get_property_by_address_or_mls_number
 from app.services.agent_service import verify_agent_by_agent_id_and_broker_name
-from app.db.schemas import BuyerRealtorConfirmation, BuyerRealtorSignUP, CreatebookingRequest, GetBooking, ListingRealtorConfirmation, ListingRealtorSignUP, MessageRequestSignUP, CollectFeedback
+from app.db.schemas import BuyerRealtorConfirmation, BuyerRealtorSignUP, CreatebookingRequest, GetBooking, CheckShowing, ListingRealtorConfirmation, ListingRealtorSignUP, MessageRequestSignUP, CollectFeedback
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -78,6 +78,14 @@ async def buyer_book_showings(request: ListingRealtorSignUP, db: Session = Depen
     realtor_service = RealtorService()
     response = realtor_service.book_showings(db, request.booking_address, request.mls_number, request.date, request.time, request.buyer_agent_phone_number)
     logger.warning(f"Listing realtor sign up response: {response}")
+    return JSONResponse(content=response)
+
+@router.post('/realtor/check_showing')
+async def check_showing(request: CheckShowing, db: Session = Depends(get_db)):
+    logger.warning(f"Check showing request: {request}")
+    realtor_service = RealtorService()
+    response = realtor_service.check_showing(db, request.mls_number, request.booking_address)
+    logger.warning(f"Check showing response: {response}")
     return JSONResponse(content=response)
 
 @router.post('/buyer_realtor/get_booking')

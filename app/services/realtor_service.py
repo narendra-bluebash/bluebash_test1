@@ -20,6 +20,19 @@ class RealtorService:
     def __init__(self):
         pass
 
+    def check_showing(self, db, mls_number, address):
+        logger.warning(f"Check showing request: {mls_number}, {address}")
+        #TODO: Add logic to check showing
+        response = fetch_listings_by_mls_number(mls_number)
+        logger.warning(f"Check showing response: {response}")
+        if not response:
+            return "Invalid mls_number or address"
+        if response["status"] == "Hold all Action":
+            return "This property is currently under offer. I'll reach out to the owner to see if they're still open to private showings."
+        if response["status"] == "Sold":
+            return "This property has already been sold."
+        return response
+
     def book_showings(self, db, booking_address, mls_number, date, time, buyer_agent_phone_number):
         buyer_selected_date = date
         buyer_selected_time = time
@@ -27,10 +40,12 @@ class RealtorService:
         #TODO: Add logic to get booking details from mls_number
         # response = get_property_by_address_or_mls_number(mls_number=mls_number, address=booking_address)
         response = fetch_listings_by_mls_number(mls_number)
-        if response is None:
+        logger.warning(f"Listing realtore - response: {response}")
+        if not response:
             return "Invalid mls_number or address"
         listing_agent_full_name = response["agent_name"]
         listing_agent_phone_number = response["agent_phone"]
+        listing_agent_phone_number= "+917347256305"
         type = "listing"
         booking_address = response["streetaddress"]
         try:

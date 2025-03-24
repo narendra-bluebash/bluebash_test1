@@ -32,6 +32,10 @@ class ListingRealtorSignUP(BaseModel):
     time: str = Field(default="")
     buyer_agent_phone_number: str = Field(default="")
 
+class CheckShowing(BaseModel):
+    mls_number: str = Field(default="")
+    booking_address: str = Field(default="")
+
 class BuyerRealtorConfirmation(BaseModel):
     phone_number: str = Field(default="")
     mls_number: str = Field(default="")
