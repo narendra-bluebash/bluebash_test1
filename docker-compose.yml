@@ -1,6 +1,6 @@
 services:
   realtors_app:
-    image: realtors_app:latest
+    image: smart_realtor:latest
     container_name: realtors_app_container
     ports:
       - 7860:7860
